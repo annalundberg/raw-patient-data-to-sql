@@ -1,6 +1,7 @@
 #!/usr/bin/env R
 
-setwd("~/bgmp/oda/2018-group-projects-oda/cogyes/")
+##set directory containing data
+setwd("<path_to_datafiles>")
 
 results <- read.csv("data/Visits.csv")
 

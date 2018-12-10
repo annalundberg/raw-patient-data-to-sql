@@ -1,7 +1,9 @@
 #!/usr/bin/env R
 
-setwd("~/bgmp/oda/2018-group-projects-oda/cogyes/")
+##set directory containing data
+setwd("<path_to_datafiles>")
 
+## remove blank column ##
 surgery <- read.csv("data/Surgery.csv")
 surg1 <- surgery[1:2]
 surg2 <- surgery[4:22]
