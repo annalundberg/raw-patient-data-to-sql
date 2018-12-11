@@ -1,0 +1,55 @@
+#,Datamart,Datamart Subfolder,Summary Grouping,Field Name,Description,Source Object,Source Field
+5,Surgery,Patient Info,Demographics & Vitals,BMI,Patient's Body Mass Index at time of visit,PAT_ENC,BMI
+4,Visits,Vital Signs,Demographics & Vitals,BMI,Body Mass Index number. Based on gender and age.,Calculated,
+4,Visits,Vital Signs,Demographics & Vitals,BP,Blood pressure in text format e.g. 140/80',DW_FLWSHT_FACT,MEASURED_VALUE
+0,Demographics,Demographics,Demographics & Vitals,CURRENT_AGE_YEARS,Current age in years as of last table refresh. Will be null if patient is deceased.,Calculated,
+0,Demographics,Flags/Patient Status,Demographics & Vitals,CURRENT_TOBACCO_USER,"Does the patient currently use tobacco? Y - Yes, N - No, U - Unknown",SOCIAL_HX,IS_TOBACCO_USER
+0,Demographics,Demographics,Demographics & Vitals,ETHNIC_GROUP,Ethnic Group,ZC_ETHNIC_GROUP,NAME
+2,Flowsheet,Measurements,Demographics & Vitals,FLO_DIS_NAME,Measurement Display name,IP_FLO_GP_DATA,FLO_DIS_NAME
+2,Flowsheet,Measurements,Demographics & Vitals,FLO_MEAS_NAME,Measurement name,IP_FLO_GP_DATA,FLO_MEAS_NAME
+0,Demographics,Demographics,Demographics & Vitals,GENDER,Gender Code M or F,PATIENT,SEX
+5,Surgery,Patient Info,Demographics & Vitals,HEIGHT,Height at time of surgery,PAT_ENC,HEIGHT
+2,Flowsheet,Measurements,Demographics & Vitals,MEAS_VALUE,Measurement value,IP_FLWSHT_MEAS,MEAS_VALUE
+4,Visits,Vital Signs,Demographics & Vitals,MOST_CURRENT_HEIGHT,Most current height in inches measured prior to or at encounter.,DW_FLWSHT_FACT,MEASURED_VALUE
+0,Demographics,Flags/Patient Status,Demographics & Vitals,PAT_STATUS,"Patient Status, - Alive, Deceased, etc.",PATIENT,PAT_STATUS
+0,Demographics,Demographics,Demographics & Vitals,RACE,Race,OHSU_PATIENT_RACE_V,RACE_NAME
+2,Flowsheet,Measurements,Demographics & Vitals,UNIT,Measurement unit,IP_FLO_GP_DATA,UNIT
+2,Flowsheet,Measurements,Demographics & Vitals,VALUE_TYPE_NAME,"This determines the type of data in the record (i.e. numeric, string, temperature, etc.) ",IP_FLO_GP_DATA,VALUE_TYPE_NAME
+5,Surgery,Patient Info,Demographics & Vitals,WEIGHT,Weight in kilograms at time of surgery,PAT_ENC,WEIGHT
+4,Visits,Vital Signs,Demographics & Vitals,WEIGHT,Weight in ounces,,
+5,Surgery,Patient Info,Diagnosis/Procedure,DIABETES,Has patient been diagnosed with any type of diabetes via ICD-9 code of 250.*,DDM_DIABETES,Lookup (count) via pat_id
+3,Hospitalizations,Diagnosis,Diagnosis/Procedure,ENCOUNTER_DIAGNOSIS,List of diagnosis associated with the encounter,CLARITY_EDG,HISTORICAL_REF_CODE
+4,Visits,Diagnosis,Diagnosis/Procedure,ENCOUNTER_DIAGNOSIS,List of diagnosis associated with the encounter,CLARITY_EDG,HISTORICAL_REF_CODE
+3,Hospitalizations,Procedures,Diagnosis/Procedure,ENCOUNTER_PROCEDURES,List of procedures performed during stay,CL_ICD_PX,"PROC_MASTER_NM,PROCEDURE_NAME"
+5,Surgery,Account Level Info,Diagnosis/Procedure,PRIMARY_DX_ICD_NAME,Primary Diagnosis description,CLARITY_EDG,DX_NAME
+6,Microbiology Details,Primary Diagnosis/Procedure,Diagnosis/Procedure,PRIMARY_DX_ICD_NAME,Name of primary or discharge diagnosis,PV_VISIT or PV_HOSPITALIZATION,PRIMARY_DX_NAME or BILL_DISCHA
+5,Surgery,Account Level Info,Diagnosis/Procedure,PRIMARY_PX_ICD_NAME,Primary Procedure ICD code,CL_ICD_PX,ICD_PX_NAME
+6,Microbiology Details,Primary Diagnosis/Procedure,Diagnosis/Procedure,PRIMARY_PX_ICD_NAME,Name of primary or discharge procedure,,
+5,Surgery,Case Details,Diagnosis/Procedure,SURGERY_PROC_DESC,Delimited List of surgical procedures,SURGERY_DATA_MART,SURGERY_PROC_DESC
+6,Microbiology Details,Antibiotics,Lab Details,ANTIBIOTIC,name of antibiotic used in test,KAISER_MICROB,ANTIBIOTIC
+1,Results,Component,Lab Details,COMMON_NAME,"The common name can be used to gather multiple components with different names that actually refer to the same thing, for example Na and Sodium. ",CLARITY_COMPONENT,COMPONENT_NAME
+1,Results,Order,Lab Details,DESCRIPTION,Brief summary of the procedure order,DW_NONMED_ORDERS_FACT,DESCRIPTION
+6,Microbiology Details,Order Details,Lab Details,GRAM_STAIN,Information about gram stain from Kaiser lab,KAISER_MICROB,GRAM_STAIN
+5,Surgery,Labs,Lab Details,HEC_A1C_LAB_VALUE,Value of last HbA1C before surgery,ORDER_RESULTS,ORD_NUM_VALUE
+6,Microbiology Details,Antibiotics,Lab Details,KIRBY_BAUER,Result of susceptilbility test when method was Kirby-Bauer (K),KAISER_MICROB,RESULT
+6,Microbiology Details,Antibiotics,Lab Details,MIC,Result of susceptilbility test when method was Instrument(Vitek) (I) or MIC (M),KAISER_MICROB,RESULT
+1,Results,Component,Lab Details,ORD_VALUE,"The value returned for each result component, in short free text format.",ORDER_RESULTS,ORD_VALUE
+6,Microbiology Details,Order Details,Lab Details,ORDER_NAME,Name of order,CLARITY_EAP,PROC_NAME
+6,Microbiology Details,Organism,Lab Details,ORGANISM,Name of organism for reporting.  Lab organism cleaned up.,DW_MDM_ORGANISM_LOOKUP,ORGANISM
+5,Surgery,Labs,Lab Details,POST_OP_SERUM_GLUCOSE,Post-op glucose reading,ORDER_RESULTS,ORD_NUM_VALUE
+5,Surgery,Labs,Lab Details,PRE_OP_CBG,"Last mesured value of CBG, pre-op",ORDER_RESULTS,ORD_NUM_VALUE
+5,Surgery,Labs,Lab Details,PRE_OP_SERUM_GLUCOSE,Last mesured value of Serum Glucose pre-op,ORDER_RESULTS,ORD_NUM_VALUE
+1,Results,Component,Lab Details,REFERENCE_HIGH,The highest acceptable value for each result component.,ORDER_RESULTS,REFERENCE_HIGH
+1,Results,Component,Lab Details,REFERENCE_LOW,The lowest acceptable value for each result component.,ORDER_RESULTS,REFERENCE_LOW
+1,Results,Component,Lab Details,REFERENCE_UNIT,The units for this result.,ORDER_RESULTS,REFERENCE_UNIT
+1,Results,Component,Lab Details,RESULT_FLAG,The  flag code corresponding to a standard HL7 code to mark each component result as abnormal. This field is null if the component result is within normal limits.,ZC_RESULT_FLAG,NAME
+6,Microbiology Details,Order Details,Lab Details,SAMPLE_SOURCE,Body source of sample tested,ORDER_RESULTS,ORD_VALUE
+6,Microbiology Details,Antibiotics,Lab Details,SUSCEPTIBILITY,"Susceptilbility of organism to antibiotic: Susceptible, Resistant, etc.",KAISER_MICROB,INTERPRETATION
+6,Microbiology Details,Antibiotics,Lab Details,SUSCEPTIBILITY_TEST_METHOD,"Method used in susceptilbility test (Kirby, etc.)",KAISER_MICROB,METHOD
+5,Surgery,Surgery Info,Surgery Info,ALLOGRAFT,Allograft performed? (Y/N),SURGERY_NARR,
+5,Surgery,Case Details,Surgery Info,ANESTHESIA_TYPE,Type of anesthesia used,ZC_OR_ANESTH_TYPE,NAME
+5,Surgery,Surgery Info,Surgery Info,ANESTHESIA_TYPE,Type of anesthesia used,ZC_OR_ANESTH_TYPE,NAME
+5,Surgery,Surgery Info,Surgery Info,ASA_SCORE,ASA class,SURGERY_CASES,ASA_SCORE
+5,Surgery,Surgery Info,Surgery Info,HPRO_TYPE,Type of hip prosthesis surgery,CLASFPROC,CLASFCD
+5,Surgery,Surgery Info,Surgery Info,NHSN_DUR_MINS,Minutes from cut to close,SURGERY_CASES,CASE_MINUTES
+5,Surgery,Surgery Info,Surgery Info,WOUND_CLASS,List of wound classes of the procedures performed,SURGERY_PROCS,WOUND_CLASS
