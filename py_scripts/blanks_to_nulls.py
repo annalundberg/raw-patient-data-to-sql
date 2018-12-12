@@ -11,17 +11,22 @@ def get_arguments():
 
 
 def main():
+    # Get arguments from argparse
     args = get_arguments()
-    filename = args.filename.split("/")
-    with open(args.filename, "r") as input, \
-            open("../data/tmp_" + filename[-1], "w") as out:
+    # Use original filename & path to build output filename & path
+    newfile = args.filename.split("/")
+    newfile[-1] = 'tmp_' + newfile[-1]
+    newfile = '/'.join(newfile)
+    # Open original file to edit write changes in new file
+    with open(args.filename, "r") as input, open(newfile, "w") as out:
         for line in input:
-            line = line.split(",")
-            for item in range(len(line)):
-                if line[item] == "":
+            line = line.split(",") # use list to split line into columns by ','
+            for item in range(len(line)): # check each column
+                if line[item] == "": # if column is empty, replace with NULL
                     line[item] = "NULL"
-                elif line[item] == "\n":
+                elif line[item] == "\n": # if last column is empty, replace with 'NULL'+'\n'
                     line[item] = "NULL\n"
+            # Line editing done, rejoin to csv and write to newfile
             line = ",".join(line)
             out.write(line)
 

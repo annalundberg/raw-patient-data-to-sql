@@ -77,9 +77,12 @@ def conv_file(file, cols):
     '''(file, list)->File
     This fxn reads in the file and handles fxn to split column and re makes
     each line with the new column'''
-    file_path = file.split('/') #split up file path & file name
-    new_file = '../data/tmp_'+file_path[-1] #make path & new name of new file
-    with open(file) as f, open(new_file, 'w') as new_f: #open original file in read & new file to write
+    # Use original filename & path to build output filename & path
+    newfile = args.filename.split("/")
+    newfile[-1] = 'tmp_' + newfile[-1]
+    newfile = '/'.join(newfile)
+    # Open original file to edit write changes in new file
+    with open(file) as f, open(newfile, 'w') as new_f:
         ln = 0
         for line in f: #iterate through lines of original file
             ln += 1
@@ -87,7 +90,7 @@ def conv_file(file, cols):
             added = 0 #init count for added columns
             for col in range(len(cols)): #perform the following for each column in list(cols)
                 n_col = int(cols[col])-1+added #adjust column for any added columns
-                ord_value = entry[n_col] 
+                ord_value = entry[n_col]
                 if ln == 1: #edit header column
                     value = 'NUMERIC_'+ord_value
                     comment = 'TEXT_'+ord_value
