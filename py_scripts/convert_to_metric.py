@@ -37,16 +37,20 @@ def convert(file, cols, unit):
     '''(file,list,str) -> None
     This fxn reads in .csv, and converts specified columns values to metric
     units. Ounces to kg and inches to cm.'''
-    file_path = file.split('/')
-    new_file = '../data/tmp_'+file_path[-1] # designate new file name & path
-    ln = 0
+    # Use original filename & path to build output filename & path
+    newfile = file.split("/")
+    newfile[-1] = 'tmp_' + newfile[-1]
+    newfile = '/'.join(newfile)
+    ln = 0 # init line count
+    # Open original file to edit write changes in new file
     with open(file) as o_data, open(new_file, 'w') as n_file:
         for line in o_data:
             ln += 1
             entry = line.split(',') #split csv into list by columns
-            if ln == 1:
-                newline = line
+            if ln == 1: # header line
+                newline = entry # no conversions necessary
             else:
+                # Iterate through specified columns to convert
                 for i in range(len(cols)):
                     value = entry[cols[i]-1]
                     if unit[i] == 'oz':
@@ -55,7 +59,8 @@ def convert(file, cols, unit):
                         entry[cols[i]-1] = inch_to_cm(value)
                     else:
                         print('Error: invalid units')
-                newline = ','.join(str(item) for item in entry)
+            # Convert list back to csv line and write to newfile
+            newline = ','.join(str(item) for item in entry)
             n_file.write(newline)
     return None
 

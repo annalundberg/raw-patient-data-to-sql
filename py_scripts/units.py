@@ -12,9 +12,11 @@ def get_arguments():
 
 def main():
     args = get_arguments()
-    filename = args.filename.split("/")
-
-    # Organize This Later
+    # Use original filename & path to build output filename & path
+    newfile = args.filename.split("/")
+    newfile[-1] = 'tmp_' + newfile[-1]
+    newfile = '/'.join(newfile)
+    # Unit conversion dictionary
     unit_dict = {
         "cfu/ml": "cfu/mL",
         "Cfu/ml": "cfu/mL",
@@ -158,8 +160,8 @@ def main():
         "MG/DL": "mg/dL",
         "mg/dl": "mg/dL"
     }
-    with open(args.filename, "r") as input, \
-            open("../data/tmp_" + filename[-1], "w") as out:
+    # Open original file to edit write changes in new file
+    with open(args.filename, "r") as input, open(newfile, "w") as out:
         for line in input:
             line = line.split(",")
             unit = line[14]
