@@ -78,7 +78,7 @@ def conv_file(file, cols):
     This fxn reads in the file and handles fxn to split column and re makes
     each line with the new column'''
     # Use original filename & path to build output filename & path
-    newfile = args.filename.split("/")
+    newfile = file.split("/")
     newfile[-1] = 'tmp_' + newfile[-1]
     newfile = '/'.join(newfile)
     # Open original file to edit write changes in new file
@@ -98,8 +98,9 @@ def conv_file(file, cols):
                     value, comment = sort_cols(ord_value, n_col) #use fxn to sort column value
                 entry = entry[0:n_col]+[value, comment]+entry[(n_col+1):len(entry)] #add split columns to line
                 added += 1
-            newline = ','.join(str(item) for item in entry) #convert line back to csv string
-            new_f.write(newline) #add line to new file
+            # Convert list back to csv line and write to newfile
+            newline = ','.join(str(item) for item in entry)
+            new_f.write(newline)
     return new_file
 
 
