@@ -23,3 +23,13 @@ echo "CONVERTING BLANKS TO NULLS"
 ## Converts blank columns to 'NULL' ##
 ../py_scripts/blanks_to_nulls.py -f $csv_file
 mv $tmp_file $csv_file
+
+echo "ADDING PATIENT IDS MISSING FROM DEMOGRAPHICS"
+## Add patient IDs to missing from demographics table present in other tables ##
+cat $csv_file > $tmp_file
+# Use missing ID list to add entries in demographics table
+while read id; do
+  line=$id,NULL,Unknown,Unknown,U,U,NULL;
+  echo $line >> $tmp_file
+done < $data_path/data/subjectID_to_add.txt
+mv $tmp_file $csv_file
