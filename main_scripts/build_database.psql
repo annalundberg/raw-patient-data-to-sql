@@ -1,0 +1,62 @@
+#! /bin/sh
+psql << E_O_SQL
+
+select now();
+
+E_O_SQL
+
+/* DEMOGRAPHICS */
+CREATE TABLE demographics(Subject_ID char(11) primary key not null, Age float, Race char(16), Ethnic_Group char(12), Gender char(1), Tobacco_User char(1), Status char(8));
+COPY demographics(Subject_ID,Age,Race,Ethnic_Group,Gender,Tobacco_User,Status) FROM '/home/Shared/COGYES/cleaned_demographics.csv' WITH (FORMAT 'csv', DELIMITER ',', NULL 'NULL');
+
+/* FLOW */
+CREATE TABLE flow(Subject_ID char(11) REFERENCES demographics, FSD int, Recorded_Date timestamp, Entry_Date timestamp, Sex char(1), Age int, Flo_Dis_Name char(110), Flo_Meas_Name char(110), Meas_Value float, Unit char(15));
+COPY flow(Subject_ID,FSD,Recorded_Date,Entry_Date,Sex,Age,Flo_Dis_Name,Flo_Meas_Name,Meas_Value,Unit) FROM '/home/Shared/COGYES/cleaned_flow.csv' WITH (FORMAT 'csv', DELIMITER ',', NULL 'NULL');
+
+/* HOSPITALIZATIONS */ 
+CREATE TABLE hospitalizations(Subject_ID char(11) REFERENCES demographics, hosp_admsn_date timestamp, encounter_diagnosis_ICD9 char(2862), encounter_procedures_ICD9 char(1509), encounter_diagnosis_ICD10 char(2843), encounter_procedures_ICD10 char(2637));
+COPY hospitalizations(Subject_ID,hosp_admsn_date,encounter_diagnosis_ICD9, encounter_procedures_ICD9, encounter_diagnosis_ICD10, encounter_procedures_ICD10) FROM '/home/Shared/COGYES/cleaned_hospitalizations.csv' WITH (FORMAT 'csv', DELIMITER ',', NULL 'NULL');
+
+/* SURGERY */
+CREATE TABLE surgery(Subject_ID char(11) REFERENCES demographics, surg_date timestamp, bmi float, height float, weight float, primary_icd9_dx_name char(141), primary_icd9_px_name char(29), primary_icd10_dx_name char(153), primary_icd10_px_name char(136), surg_proc_desc char(207), anesthesia_type char(21), hec_a1c_lab_value float, pre_op_serum_glucose int, post_op_serum_glucose int, pre_op_cbg int, diabetes char(1), asa_score char(5), hpro_type char(5), nhsn_dur_min int, wound_class char(18));
+COPY surgery(Subject_ID,surg_date,bmi,height,weight,primary_icd9_dx_name,primary_icd9_px_name,primary_icd10_dx_name,primary_icd10_px_name,surg_proc_desc,anesthesia_type,hec_a1c_lab_value,pre_op_serum_glucose,post_op_serum_glucose,pre_op_cbg,diabetes,asa_score,hpro_type,nhsn_dur_min,wound_class) FROM '/home/Shared/COGYES/cleaned_surgery.csv' WITH (FORMAT 'csv', DELIMITER ',', NULL 'NULL');
+
+/* VISITS */ 
+CREATE TABLE visits(Subject_ID char(11) REFERENCES demographics, visit_date_time timestamp, weight float, height float, bmi float, bp_systole int, bp_diastole int, encounter_diagnosis_icd9 char(1439), encounter_diagnosis_icd10 char(1501));
+COPY visits(Subject_ID,visit_date_time,weight,height,bmi,bp_systole,bp_diastole,encounter_diagnosis_icd9,encounter_diagnosis_icd10) FROM '/home/Shared/COGYES/cleaned_visits.csv' WITH (FORMAT 'csv', DELIMITER ',', NULL 'NULL');
+
+/* BLOOD_GAS */
+CREATE TABLE blood_gas(Subject_ID char(11) REFERENCES demographics, order_proc_id int, order_status char(9), lab_status char(21), result_status char(9), ordering_date timestamp, specimen_taken_time timestamp, result_time timestamp, description char(20), common_name char(28), numeric_order_value float, text_order_value char(19), reference_high char(4), reference_low char(9), reference_unit char(17), result_flag char(12));
+COPY blood_gas(Subject_ID,order_proc_id,order_status,lab_status,result_status,ordering_date,specimen_taken_time,result_time,description,common_name,numeric_order_value,text_order_value,reference_high,reference_low,reference_unit,result_flag) FROM '/home/Shared/COGYES/blood_gas.csv' WITH (FORMAT 'csv', DELIMITER ',', NULL 'NULL');
+
+/* CBC */ 
+CREATE TABLE cbc(Subject_ID char(11) REFERENCES demographics, order_proc_id int, order_status char(9), lab_status char(21), result_status char(11), ordering_date timestamp, specimen_taken_time timestamp, result_time timestamp, description char(3), common_name char(37), numeric_order_value float, text_order_value char(65), reference_high char(9), reference_low char(10), reference_unit char(8), result_flag char(12));
+COPY cbc(Subject_ID,order_proc_id,order_status,lab_status,result_status,ordering_date,specimen_taken_time,result_time,description,common_name,numeric_order_value,text_order_value,reference_high,reference_low,reference_unit,result_flag) FROM '/home/Shared/COGYES/cbc.csv' WITH (FORMAT 'csv', DELIMITER ',', NULL 'NULL');
+
+/* ECG */ 
+CREATE TABLE ecg(Subject_ID char(11) REFERENCES demographics, order_proc_id int, order_status char(9), lab_status char(21), result_status char(11), ordering_date timestamp, specimen_taken_time timestamp, result_time timestamp, description char(11), common_name char(16), numeric_order_value float, text_order_value char(84), reference_high char(4), reference_low char(4), reference_unit char(7), result_flag char(4));
+COPY ecg(Subject_ID,order_proc_id,order_status,lab_status,result_status,ordering_date,specimen_taken_time,result_time,description,common_name,numeric_order_value,text_order_value,reference_high,reference_low,reference_unit,result_flag) FROM '/home/Shared/COGYES/ecg.csv' WITH (FORMAT 'csv', DELIMITER ',', NULL 'NULL');
+
+/* METABOLIC */ 
+CREATE TABLE metabolic(Subject_ID char(11) REFERENCES demographics, order_proc_id int, order_status char(9), lab_status char(21), result_status char(9), ordering_date timestamp, specimen_taken_time timestamp, result_time timestamp, description char(50), common_name char(37), numeric_order_value float, text_order_value char(49), reference_high char(5), reference_low char(9), reference_unit char(30), result_flag char(12));
+COPY metabolic(Subject_ID,order_proc_id,order_status,lab_status,result_status,ordering_date,specimen_taken_time,result_time,description,common_name,numeric_order_value,text_order_value,reference_high,reference_low,reference_unit,result_flag) FROM '/home/Shared/COGYES/metabolic.csv' WITH (FORMAT 'csv', DELIMITER ',', NULL 'NULL');
+
+/* MISC */
+CREATE TABLE misc(Subject_ID char(11) REFERENCES demographics, order_proc_id int, order_status char(9), lab_status char(21), result_status char(11), ordering_date timestamp, specimen_taken_time timestamp, result_time timestamp, description char(79), common_name char(66), numeric_order_value float, text_order_value char(244), reference_high char(11), reference_low char(24), reference_unit char(30), result_flag char(12));
+COPY misc(Subject_ID,order_proc_id,order_status,lab_status,result_status,ordering_date,specimen_taken_time,result_time,description,common_name,numeric_order_value,text_order_value,reference_high,reference_low,reference_unit,result_flag) FROM '/home/Shared/COGYES/misc.csv' WITH (FORMAT 'csv', DELIMITER ',', NULL 'NULL');
+
+/* RENAL */ 
+CREATE TABLE renal(Subject_ID char(11) REFERENCES demographics, order_proc_id int, order_status char(9), lab_status char(21), result_status char(9), ordering_date timestamp, specimen_taken_time timestamp, result_time timestamp, description char(34), common_name char(29), numeric_order_value float, text_order_value char(16), reference_high char(4), reference_low char(8), reference_unit char(6), result_flag char(12));
+COPY renal(Subject_ID,order_proc_id,order_status,lab_status,result_status,ordering_date,specimen_taken_time,result_time,description,common_name,numeric_order_value,text_order_value,reference_high,reference_low,reference_unit,result_flag) FROM '/home/Shared/COGYES/renal.csv' WITH (FORMAT 'csv', DELIMITER ',', NULL 'NULL');
+
+/* TRANSFUSION */
+CREATE TABLE transfusion(Subject_ID char(11) REFERENCES demographics, order_proc_id int, order_status char(9), lab_status char(21), result_status char(9), ordering_date timestamp, specimen_taken_time timestamp, result_time timestamp, description char(28), common_name char(19), numeric_order_value float, text_order_value char(71), reference_high char(4), reference_low char(4), reference_unit char(4), result_flag char(4));
+COPY transfusion(Subject_ID,order_proc_id,order_status,lab_status,result_status,ordering_date,specimen_taken_time,result_time,description,common_name,numeric_order_value,text_order_value,reference_high,reference_low,reference_unit,result_flag) FROM '/home/Shared/COGYES/transfusion.csv' WITH (FORMAT 'csv', DELIMITER ',', NULL 'NULL');
+
+/* UA_DIP */ 
+CREATE TABLE ua_dip(Subject_ID char(11) REFERENCES demographics, order_proc_id int, order_status char(9), lab_status char(21), result_status char(11), ordering_date timestamp, specimen_taken_time timestamp, result_time timestamp, description char(16), common_name char(23), numeric_order_value float, text_order_value char(23), reference_high char(8), reference_low char(17), reference_unit char(13), result_flag char(8));
+COPY ua_dip(Subject_ID,order_proc_id,order_status,lab_status,result_status,ordering_date,specimen_taken_time,result_time,description,common_name,numeric_order_value,text_order_value,reference_high,reference_low,reference_unit,result_flag) FROM '/home/Shared/COGYES/ua_dip.csv' WITH (FORMAT 'csv', DELIMITER ',', NULL 'NULL');
+
+/* UA_MICRO */
+CREATE TABLE ua_micro(Subject_ID char(11) REFERENCES demographics, order_proc_id int, order_status char(9), lab_status char(21), result_status char(9), ordering_date timestamp, specimen_taken_time timestamp, result_time timestamp, description char(22), common_name char(25), numeric_order_value float, text_order_value char(13), reference_high char(8), reference_low char(17), reference_unit char(13), result_flag char(8));
+COPY ua_micro(Subject_ID,order_proc_id,order_status,lab_status,result_status,ordering_date,specimen_taken_time,result_time,description,common_name,numeric_order_value,text_order_value,reference_high,reference_low,reference_unit,result_flag) FROM '/home/Shared/COGYES/ua_micro.csv' WITH (FORMAT 'csv', DELIMITER ',', NULL 'NULL');

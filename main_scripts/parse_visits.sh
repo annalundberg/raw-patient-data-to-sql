@@ -19,7 +19,7 @@ rm $infile
 
 echo "TIMEDATE CONVERSION"
 
-./timedate.py -f $csv_file -s space -c 2
+../py_scripts/timedate.py -f $csv_file -s space -c 2
 mv $tmp_file $csv_file
 
 echo "REMOVING OUTLIERS"

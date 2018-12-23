@@ -29,7 +29,7 @@ mv $tmp_file $csv_file
 
 echo "REFORMATTING COLUMNS"
 ##column split conversion script
-./column_split.py -f $csv_file -c 11
+../py_scripts/column_split.py -f $csv_file -c 11
 mv $tmp_file $csv_file
 
 ## Convert all blank fields to "NULL"
