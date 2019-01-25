@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-'''Remove outliers in visits. Outliers identified for removal are unreasonably
-high values of height and BMI. The following code is aimed at fixing This
+'''Remove unreasonable ages in staging. Ages that are unreasonable are removed,
+such as negative ages. The following code is aimed at fixing this
 specific case'''
 
 import argparse
@@ -14,8 +14,8 @@ def get_arguments():
     return parser.parse_args()
 
 def convert(file):
-    '''This fxn reads in .csv, and removes unreasonably high values FROM
-    height and BMI'''
+    '''This fxn reads in .csv, and removes unreasonable values FROM
+    age'''
     filename = file.split('/')
     filepath = "/".join(filename[:-1])
     new_file = filepath + "/tmp_" + filename[-1]
@@ -24,21 +24,15 @@ def convert(file):
         for line in o_data:
             ln += 1
             entry = line.split(',')
-            if ln == 1:
-                newline = line
-            else:
-                if entry[4] != 'NA':
-                    if float(entry[4]) > 100:
-                        entry[4] = 'NA'
-                if entry[3] != 'NA':
-                    if float(entry[3]) > 90:
-                        entry[3] = 'NA'
-                newline = ','.join(str(item) for item in entry)
+            if ln != 1:
+                if float(entry[1]) < 0:
+                    entry[1] = 'NULL'
+            newline = ','.join(str(item) for item in entry)
             n_file.write(newline)
     return None
 
 def main():
-    '''runs metric conversions using argparse provided details'''
+    '''runs unreasonable age removal'''
     args = get_arguments()
     convert(args.filename)
     return None

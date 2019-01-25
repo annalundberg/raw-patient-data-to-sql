@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Files
-data_path="../data" ##edit this to your data folder
+data_path="<path_to_datafile>" ##edit this to your data folder
 infile=$data_path"/staging.tsv"
 hyperlink=$data_path"/stag_link.tsv"
 csv_file=$data_path"/final_data/cleaned_staging.csv"
