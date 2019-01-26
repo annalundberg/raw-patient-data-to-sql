@@ -9,8 +9,14 @@ Input files are not publicly available but are anonymized .csv versions of:
 - Hospitalizations Records
 - Visit Records
 - Surgery Records
+- (Tissue Sample) Staging Records
 
 ## The Pipeline
 Each raw csv was processed through a pipeline contained in main scripts.  
 Each main script is written in Bash and uses scripts contained in the R_scripts and/or py_scripts folders.  
 To apply pipeline to datafiles, edit the filepaths in mainscript any R_scripts used.
+
+## The Poster
+- PDF version available
+- Project References
+- Supplemental
