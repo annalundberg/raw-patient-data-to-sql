@@ -12,10 +12,11 @@ def get_arguments():
 
 def main():
     args = get_arguments()
-    filename = args.filename.split("/")
+    file = args.filename
+    filename = file.split('/')
     filepath = "/".join(filename[:-1])
-    with open(args.filename, "r") as input, \
-            open(filepath + "/tmp_" + filename[-1], "w") as out:
+    new_file = filepath + "/tmp_" + filename[-1]
+    with open(file, "r") as input, open(new_file, "w") as out:
         for line in input:
             line = line.split(",")
             for item in range(len(line)):

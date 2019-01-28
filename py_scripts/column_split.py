@@ -78,11 +78,11 @@ def conv_file(file, cols):
     This fxn reads in the file and handles fxn to split column and re makes
     each line with the new column'''
     # Use original filename & path to build output filename & path
-    newfile = file.split("/")
-    newfile[-1] = 'tmp_' + newfile[-1]
-    newfile = '/'.join(newfile)
+    filename = file.split('/')
+    filepath = "/".join(filename[:-1])
+    new_file = filepath + "/tmp_" + filename[-1]
     # Open original file to edit write changes in new file
-    with open(file) as f, open(newfile, 'w') as new_f:
+    with open(file) as f, open(new_file, 'w') as new_f:
         ln = 0
         for line in f: #iterate through lines of original file
             ln += 1
@@ -105,7 +105,7 @@ def conv_file(file, cols):
 
 
 def main():
-    '''runs internal fxn'''
+    '''runs internal fxns'''
     args = get_arguments()
     new = conv_file(args.filename, args.columns)
     return new
