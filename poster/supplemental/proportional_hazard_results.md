@@ -1,4 +1,4 @@
-### Proportional Hazards Results
+### Cox Proportional Hazards Results
 
 | Category                                           | P Value  |
 | -------------------------------------------------- | -------- |
