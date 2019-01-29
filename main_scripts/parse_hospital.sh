@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
+## Pipeline for Hospital records csv cleaning ##
 
 echo "CONVERTING FROM CSV TO TSV FOR PROCESSING"
 
 #Convert the original file to a tsv, also remove the one row without a patient ID
 Rscript ../r_scripts/hosps_to_tsv.R
 
+echo "SET FILES"
 # Files
 data_path="<path_to_datafiles>"
 infile=$data_path"/data/hospital.tsv"
@@ -18,7 +20,7 @@ cat $infile | tr -d ',' | tr -d '"' | tr '\t' ',' > $csv_file
 rm $infile
 
 echo "TIMEDATE CONVERSION"
-
+# convert all time/date stamps to SQL compatible smalldatetime
 ../py_scripts/timedate.py -f $csv_file -s slash -c 2
 mv $tmp_file $csv_file
 
@@ -30,7 +32,6 @@ echo "FIXING PROBLEMATIC CHARACTERS"
 cat $csv_file | tr '_' '.' | tr -d "'" | tr ';' ' ' | tr '|' ' ' | tr "^" "-" \
 | tr '/' '-' | tr '\\' '-' > $tmp_file
 mv $tmp_file $csv_file
-
 # characters to still deal with: + % < > &
 sed -i 's/</below /g' $csv_file
 sed -i 's/>/above /g' $csv_file
