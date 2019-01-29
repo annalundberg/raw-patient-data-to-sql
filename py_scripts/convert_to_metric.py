@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-'''Convert height and/or weight to metric'''
+'''Convert height and weight to metric. NA converted to NULL for SQL '''
 
 import argparse
 
@@ -17,7 +17,13 @@ def get_arguments():
 
 def inch_to_cm(height):
     '''(str)->float
-    This fxn converts inches to cm'''
+    This fxn converts inches to cm. Blank columns designated with
+    NA will be converted to NULL.
+    >>>inch_to_cm('10')
+    25.4
+    >>>inch_to_cm('NA')
+    'NULL'
+    '''
     if height != 'NA' and height != 'NULL': #avoid non-numic values
         height=float(height)*2.54 #conversion factor
     elif height == 'NA':
@@ -26,21 +32,28 @@ def inch_to_cm(height):
 
 def oz_to_kg(weight):
     '''(str)->float
-    This fxn converts ounces to kg'''
-    if weight != 'NA' and weight != 'NULL': #avoid non-numeric values
-        weight=float(weight)/35.274 #conversion factor
-    elif weight == 'NA':
+    This fxn converts ounces to kg. Blank columns designated with
+    NA will be converted to NULL.
+    >>>oz_to_kg('529.11')
+    15
+    >>>oz_to_kg('NA')
+    'NULL'
+    '''
+    if weight == 'NA':
         weight = 'NULL'
+    elif weight != 'NULL': #avoid non-numeric values
+        weight=float(weight)/35.274 #conversion factor
     return weight
 
 def convert(file, cols, unit):
-    '''(file,list,str) -> None
-    This fxn reads in .csv, and converts specified columns values to metric
-    units. Ounces to kg and inches to cm.'''
+    '''(file,list,str) -> file
+    This fxn reads in csv, and converts specified columns values to
+    metric units. Ounces to kg and inches to cm. NA is also coverted
+    to NULL. Uses fxns oz_to_kg and inch_to_cm'''
     # Use original filename & path to build output filename & path
-    newfile = file.split("/")
-    newfile[-1] = 'tmp_' + newfile[-1]
-    newfile = '/'.join(newfile)
+    filename = file.split('/')
+    filepath = "/".join(filename[:-1])
+    new_file = filepath + "/tmp_" + filename[-1]
     ln = 0 # init line count
     # Open original file to edit write changes in new file
     with open(file) as o_data, open(new_file, 'w') as n_file:
@@ -65,7 +78,8 @@ def convert(file, cols, unit):
     return None
 
 def main():
-    '''runs metric conversions using argparse provided details'''
+    '''runs metric conversion fxns from above using argparse
+    provided specifications'''
     args = get_arguments()
     convert(args.filename,args.columns,args.units)
     return None

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-'''Fix E's in numeric_order_value from misc table to fit SQL float format.'''
+'''Fix E's in numeric_order_value from misc table (used by parse_results) 
+to fit SQL float format.'''
 
 import argparse
 
@@ -12,15 +13,14 @@ def get_arguments():
                         required=True, type=str)
     return parser.parse_args()
 
-args = get_arguments()
-file = args.filename
-filename = file.split('/')
-filepath = "/".join(filename[:-1])
-new_file = filepath + "/tmp_" + filename[-1]
-
-with open(file, "r") as fh:
-    with open(new_file, "w") as oFH:
-
+def fix(file):
+    '''(file) -> file
+    Returns numberic 'e' notation to floats from misc table,
+    for SQL compatibility'''
+    filename = file.split('/')
+    filepath = "/".join(filename[:-1])
+    new_file = filepath + "/tmp_" + filename[-1]
+    with open(file, "r") as fh, open(new_file, "w") as oFH:
         lc = 0
         for line in fh:
             lc += 1
@@ -40,3 +40,14 @@ with open(file, "r") as fh:
                     oFH.write(",".join(line))
                 else:
                     oFH.write(",".join(line))
+    return None
+
+def main():
+    '''runs fxn for fixing float value notation using argparse
+    to get file'''
+    args = get_arguments()
+    fix(args.filename)
+    return None
+
+if __name__ == '__main__':
+    main()
