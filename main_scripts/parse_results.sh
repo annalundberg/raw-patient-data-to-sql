@@ -1,5 +1,7 @@
 #!/bin/bash
 
+## Pipeline for Results csv cleaning & splitting into tables ##
+
 # 73% of the data is accounted for between these tables (346228/474150)
 
 #Sort the whole file
@@ -11,7 +13,8 @@ echo "CONVERTING FROM CSV TO TSV FOR PROCESSING"
 #Convert the original file to a tsv, also remove the one row without a patient ID
 Rscript ../r_scripts/results_to_tsv.R
 
-# Files
+echo "SET FILES"
+# File Shortcuts
 data_path="<path_to_datafiles>"
 infile=$data_path"/data/results.tsv"
 csv_file=$data_path"/data/cleaned_results.csv"
@@ -37,10 +40,9 @@ echo "CONVERTING BLANKS TO NULLS"
 ./blanks_to_nulls.py -f $csv_file
 mv $tmp_file $csv_file
 
-
+echo "FIXING PROBLEMATIC CHARACTERS"
 ## Clean up problematic characters
 ## grep -Eo '[^A-Za-z0-9.(), -]' cleaned_results.csv | sort | uniq -c | sort
-echo "FIXING PROBLEMATIC CHARACTERS"
 
 cat $csv_file | tr '[' '(' | tr ']' ')' | tr -d '\\' | tr -d '!' | \
 tr '_' ' ' | tr -d '?' | tr -d "'" | tr ';' ' ' | tr -d '$' | tr "+" " " \
@@ -232,6 +234,7 @@ head -1 $csv_file > $temp_header
 cat $data_path/data/results/misc.csv >> $temp_header
 mv $temp_header $data_path/data/results/misc.csv
 
+echo "FINAL FILE CLEANING"
 ## Fix float values in misc table ##
 ./py_scripts/fixing_misc.py -f $data_path/data/results/misc.csv
 mv $data_path/data/results/tmp_misc.csv $data_path/data/results/misc.csv

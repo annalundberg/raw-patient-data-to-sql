@@ -33,6 +33,8 @@ def main():
                     line[item] = "NULL\n"
                 elif line[item] == "NA":
                     line[item] = "NULL"
+                elif line[item] == "NA":
+                    line[item] = "NULL"
                 elif line[item] == "Not applicable":
                     line[item] = "NULL"
             line = ",".join(line)

@@ -1,12 +1,13 @@
 #!/bin/bash
 
+## Pipeline for Flowsheet csv cleaning ##
 
 echo "CONVERTING FROM CSV TO TSV FOR PROCESSING"
 #Convert the original file to a tsv, also remove the one row without a patient ID
 Rscript ../r_scripts/flow_to_tsv.R
 
 echo "SET FILES"
-# Set Files
+# File shortcuts
 data_path="<path_to_datafiles>"
 infile=$data_path"/data/flow.tsv"
 csv_file=$data_path"/data/cleaned_flow.csv"
