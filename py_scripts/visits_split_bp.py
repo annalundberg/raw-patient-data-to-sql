@@ -13,17 +13,17 @@ def get_arguments():
                         required=True, type=str)
     return parser.parse_args()
 
-args = get_arguments()
-file = args.filename
-filename = file.split('/')
-filepath = "/".join(filename[:-1])
-new_file = filepath + "/tmp_" + filename[-1]
-
-lc = 0
-SYSTOLE = ""
-DIASTOLE = ""
-with open(file, "r") as fh:
-    with open(new_file, "w") as oFH:
+def bp_split(file):
+    '''(file) -> file
+    This fxn splits the blood pressure column into 2 separate columns:
+    systolic and diastolic'''
+    filename = file.split('/')
+    filepath = "/".join(filename[:-1])
+    new_file = filepath + "/tmp_" + filename[-1]
+    lc = 0
+    SYSTOLE = ""
+    DIASTOLE = ""
+    with open(file, "r") as fh, open(new_file, "w") as oFH:
         for line in fh:
             lc += 1
             if lc == 1:
@@ -40,7 +40,6 @@ with open(file, "r") as fh:
                 BP = line.strip("/n").split(",")[5]
                 I9 = line.strip("/n").split(",")[6]
                 I10 = line.strip("/n").split(",")[7]
-
                 if BP == "NULL":
                     SYSTOLE = "NULL"
                     DIASTOLE = "NULL"
@@ -48,8 +47,15 @@ with open(file, "r") as fh:
                     BP = BP.split("-")
                     SYSTOLE = BP[0]
                     DIASTOLE = BP[1]
-
                 string1 = SI + "," + VD + "," + W + "," + H + "," + BMI + "," + SYSTOLE + ","
                 string2 = DIASTOLE + "," + I9 + "," + I10
                 string = string1 + string2
                 oFH.write(string)
+    return None
+
+def main():
+    '''This fxn runs bp column splitting fxn and uses argparse to get the
+    file for processing'''
+    args = get_arguments()
+    bp_split(args.filename)
+    return None
