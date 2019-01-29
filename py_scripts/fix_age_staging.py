@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-'''Remove unreasonable ages in staging. Ages that are unreasonable are removed,
-such as negative ages. The following code is aimed at fixing this
-specific case'''
+'''Remove unreasonable ages in staging. Ages that are unreasonable are
+removed, such as negative ages. The following code is aimed at fixing
+this specific case'''
 
 import argparse
 
@@ -14,8 +14,9 @@ def get_arguments():
     return parser.parse_args()
 
 def convert(file):
-    '''This fxn reads in .csv, and removes unreasonable values FROM
-    age'''
+    '''(file) -> file
+    This fxn reads in .csv, and removes previously identified,
+    unreasonable values FROM age'''
     filename = file.split('/')
     filepath = "/".join(filename[:-1])
     new_file = filepath + "/tmp_" + filename[-1]
@@ -32,7 +33,7 @@ def convert(file):
     return None
 
 def main():
-    '''runs unreasonable age removal'''
+    '''runs fxn for unreasonable age removal using argparse to get file'''
     args = get_arguments()
     convert(args.filename)
     return None

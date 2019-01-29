@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
-# to convert time and data into sql smalldatetime format
+'''This program was written to convert various time and date forms found in
+raw patient csvs into SQL smalldatetime format'''
+
 import argparse
 
 
@@ -17,9 +19,13 @@ def get_arguments():
 
 
 def month_trans(month):
-    '''(string)->string
+    '''(string) -> string
     this fxn takes in a string containing month in 3 letter abbreviated form
     and converts it to its 2 digit numerical representation in a string.
+    >>>month_trans('Mar')
+    '03'
+    >>>month_trans('Oct')
+    '10'
     '''
     m_dict={'Jan':'01','Feb':'02','Mar':'03','Apr':'04','May':'05','Jun':'06',
             'Jul':'07','Aug':'08','Sep':'09','Oct':'10','Nov':'11','Dec':'12'}
@@ -27,10 +33,14 @@ def month_trans(month):
 
 
 def timedate(date, time):
-    '''(list)->str
-    read list of month day year time to convert to sql compatible smalldatetime.
-    Input format [mm,dd,yyyy]['hh','mm','ss','XM'].
-    Output format is YYYY-MM-DD hh:mm:ss'''
+    '''(list, list)->str
+    read list of month day year time to convert to sql compatible
+    smalldatetime.
+    >>>timedate(['12','05','2009'],['12','00','00','AM'])
+    '2009-12-05 00:00:00'
+    >>>timedate(['03','15','2012'],['03','30','00','PM'])
+    '20012-03-15 15:30:00'
+    '''
     # Identify Year
     year = date[2]
     # Identify/check Month
@@ -60,33 +70,34 @@ def timedate(date, time):
 
 
 def file_parse_sp(file, cols):
-    '''(file)->file
+    '''(file, list)->file
     parses a csv file and separates lines, will incorporate other functions
     to convert time and date into sql smalldatetime format. Compatible when
     time/date is written as "Mon DD YYYY HH:MM:SS XM". AKA story format
-    New timedate is YYYY-MM-DD hh:mm:ss'''
+    New timedate is YYYY-MM-DD hh:mm:ss
+    '''
     # Use original filename & path to build output filename & path
-    newfile = file.split("/")
-    newfile[-1] = 'tmp_' + newfile[-1]
-    newfile = '/'.join(newfile)
+    filename = file.split('/')
+    filepath = "/".join(filename[:-1])
+    new_file = filepath + "/tmp_" + filename[-1]
     ln = 0 # init line count
     # Open original file to edit write changes in new file
-    with open(file) as o_data, open(newfile, 'w') as n_file:
+    with open(file) as o_data, open(new_file, 'w') as n_file:
         for line in o_data:
             ln += 1
             entry = line.split(',') #split csv into list by columns
             if ln == 1: #header
-                newline = entry #no edit needed
+                newline = entry
             else:
                 # Timedate conversion for each specified column
                 for i in range(len(cols)):
-                    date_time = entry[int(cols[i])-1]  # 'Mon DD YYYY 12:00:00 AM'
-                    date_time = date_time.split(' ') # split date & time into list
+                    date_time = entry[int(cols[i])-1]
+                    date_time = date_time.split(' ') #split date and time
                     date_time[0] = month_trans(date_time[0]) # Mon -> MM
                     date = date_time[0:3] # isolate date list
                     time = date_time[3].split(':')  # result: ['hh','mm','ss']
                     if len(date_time) == 5: # If time includes AM/PM
-                        time.append(date_time[4]) # Include AM/PM to time list
+                        time.append(date_time[4])
                     entry[int(cols[i])-1] = timedate(date, time) # Update entry
             # Convert list back to csv line and write to newfile
             newline = ','.join(str(item) for item in entry)
@@ -95,22 +106,21 @@ def file_parse_sp(file, cols):
 
 
 def file_parse_sl(file, cols):
-    '''(file)->file
+    '''(file, list) -> file
     parses a csv file and separates lines, will incorporate other functions
     to convert time and date into sql smalldatetime format. Compatible when
     date is in MM/DD/YYYY HH:MM:SS format in a csv'''
     # Use original filename & path to build output filename & path
-    newfile = file.split("/")
-    newfile[-1] = 'tmp_' + newfile[-1]
-    newfile = '/'.join(newfile)
+    filename = file.split('/')
+    filepath = "/".join(filename[:-1])
+    new_file = filepath + "/tmp_" + filename[-1]
     ln = 0 # init line count
     # Open original file to edit write changes in new file
-    with open(file) as o_data, open(newfile, 'w') as n_file:
+    with open(file) as o_data, open(new_file, 'w') as n_file:
         for line in o_data:
             ln += 1
             entry = line.split(',') #split csv into list by columns
-            # header needs no edit
-            if ln == 1:
+            if ln == 1: #header
                 newline = entry
             else:
                 # Timedate conversion for each specified column
@@ -121,7 +131,7 @@ def file_parse_sl(file, cols):
                     date_time = date_time.split(' ') # Split date and time
                     date = date_time[0]
                     if len(date_time) == 1 or date_time[1] == 'NULL': # no time entry
-                        time = '00:00:00'.split(':') # default time added
+                        time = '00:00:00'.split(':')
                     else:
                         time = date_time[1].split(':')
                     if len(time) == 2: # add seconds if needed

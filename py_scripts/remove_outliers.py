@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-'''Remove outliers in visits. Outliers identified for removal are unreasonably
-high values of height and BMI. The following code is aimed at fixing This
-specific case'''
+'''Remove outliers in visits. Outliers have been previously identified for
+removal, they are unreasonably high values of height and BMI. The following
+code is aimed at fixing this specific case'''
 
 import argparse
 
@@ -13,9 +13,11 @@ def get_arguments():
                         required=True, type=str)
     return parser.parse_args()
 
-def convert(file):
-    '''This fxn reads in .csv, and removes unreasonably high values FROM
-    height and BMI'''
+def remove_out(file):
+    '''(file) -> file
+    This fxn reads in .csv, and removes unreasonably high values FROM
+    height and BMI. Writes changes into new file designated by prefix
+    temp_ '''
     filename = file.split('/')
     filepath = "/".join(filename[:-1])
     new_file = filepath + "/tmp_" + filename[-1]
@@ -38,9 +40,9 @@ def convert(file):
     return None
 
 def main():
-    '''runs metric conversions using argparse provided details'''
+    '''runs specified outlier removal using argparse provided details'''
     args = get_arguments()
-    convert(args.filename)
+    remove_out(args.filename)
     return None
 
 if __name__ == '__main__':

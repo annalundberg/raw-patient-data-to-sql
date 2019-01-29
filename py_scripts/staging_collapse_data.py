@@ -1,16 +1,18 @@
 #!/usr/bin/env python
 
-# to convert time and data into sql smalldatetime format
+'''The purpose of this program is to collapse multiple equivalent data forms
+into a single standardized form. (Ex. M and m will both be 'm')'''
+
 import argparse
 import re
 
 
 def get_arguments():
     parser = argparse.ArgumentParser(
-        description="reads in csv file, designates columns to convert time&date and designates type of separator")
+        description="reads in csv file and designates columns to be edited")
     parser.add_argument("-f", "--filename", help="name of file",
                         required=True, type=str)
-    parser.add_argument("-c", "--columns", action='append', help="columns to split, column per -c",
+    parser.add_argument("-c", "--columns", action='append', help="columns to split, 1 column per -c",
                         required=True, type=int)
     return parser.parse_args()
 
@@ -41,11 +43,19 @@ def is_float(bit):
         return True
 
 def tumor_grade_collapse(grade):
-    '''Collapsing equivalent tumor grade values for evaluation. General tumor
+    '''(string) -> string
+    Collapsing equivalent tumor grade values for evaluation. General tumor
     grades were collapsed according to guidelines found in
     https://www.cancer.gov/about-cancer/diagnosis-staging/prognosis/tumor-grade-fact-sheet
     Other tumor grade collapsing handles simpler cases such as standardizing
-    capitalization and number of spaces'''
+    capitalization and number of spaces
+    >>>tumor_grade_collapse('Generic Grade  Undifferentiated')
+    'Generic Grade  Grade 4'
+    >>>tumor_grade_collapse('Generic Grade  Grade 4')
+    'Generic Grade  Grade 4'
+    >>>tumor_grade_collapse('Gleason  Score 5(plus)4')
+    'Gleason Score  5(plus)4'
+    '''
     grade_dict = {'Generic Grade  Low Grade':'Generic Grade  Grade 1',
         'Generic Grade  Well differentiated':'Generic Grade  Grade 1',
         'Generic Grade  Grade 1':'Generic Grade  Grade 1',
@@ -108,10 +118,12 @@ def tumor_grade_collapse(grade):
         'WHO  Type AB':'WHO  Type AB'}
     if grade in grade_dict:
         grade = grade_dict[grade]
+    else:
+        print('Warning, unexpected grade encountered:', grade)
     return grade
 
 def file_parse(file, cols):
-    '''(file)->file
+    '''(file, list)->file
     parses a csv file and separates lines, collapses various known data variety
     in specified columns. Compatible when file is a csv'''
     filename = file.split('/')
@@ -145,14 +157,14 @@ def file_parse(file, cols):
                             value = 'NULL'
                     elif cols[i] == 22: # tumor grade
                         value = tumor_grade_collapse(value)
-                    elif cols[i] == 25:
+                    elif cols[i] == 25: # percent tumor
                         if value == 'below 5 percent' or value == 'below 5':
                             value = '4'
                         elif value == 'NULL':
                             value=value
                         elif int(value) > 100:
                             value = 'NULL'
-                    elif cols[i] == 27:
+                    elif cols[i] == 27: # percent necrosis
                         if value == 'above 95 percent':
                             value = '96'
                         elif value == 't':
@@ -163,7 +175,7 @@ def file_parse(file, cols):
                             value = value
                         elif int(value) > 100:
                             value = 'NULL'
-                    elif cols[i] == 28:
+                    elif cols[i] == 28: # slide section area
                         if value == 'NULL':
                             value = 'NULL'
                             entry[int(cols[i])] = 'NULL'
@@ -179,7 +191,7 @@ def file_parse(file, cols):
                                 entry[int(cols[i])] = entry[int(cols[i])-1]
                         else:
                             swap = False
-                    elif cols[i] == 29:
+                    elif cols[i] == 29: # slide section area units
                         if value == 'NULL' or value == 'Area' or value == 'm' or value == 'Months':
                             value = 'NULL'
                         elif value == 'mm-2' or value == 'mm-2 ' or value == 'mm-2.':
@@ -188,7 +200,7 @@ def file_parse(file, cols):
                             value = value
                         elif value == 'Micron':
                             value = 'um-2'
-                    else:
+                    else: # columns not specified for processing
                         print('Unknown column, cannot simplify:', cols[i])
                     entry[int(cols[i])-1] = value
             newline = ','.join(str(item) for item in entry)

@@ -231,3 +231,7 @@ mv $temp_header $data_path/data/results/ua_micro.csv
 head -1 $csv_file > $temp_header
 cat $data_path/data/results/misc.csv >> $temp_header
 mv $temp_header $data_path/data/results/misc.csv
+
+## Fix float values in misc table ##
+./py_scripts/fixing_misc.py -f $data_path/data/results/misc.csv
+mv $data_path/data/results/tmp_misc.csv $data_path/data/results/misc.csv

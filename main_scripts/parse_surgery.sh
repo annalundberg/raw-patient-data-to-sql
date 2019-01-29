@@ -38,3 +38,7 @@ sed -i 's/>/above /g' $csv_file
 echo "CONVERTING BLANKS TO NULLS"
 ../py_scripts/blanks_to_nulls.py -f $csv_file
 mv $tmp_file $csv_file
+
+## Fix miscellaneous surgery problems
+../py_scripts/surgery_fixes.py -f $csv_file
+mv $tmp_file $csv_file

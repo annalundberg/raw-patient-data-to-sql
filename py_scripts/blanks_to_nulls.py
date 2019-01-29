@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+'''The goal here is to fill all blank columns with SQL friendly NULL. NA and
+other forms of NA will also be converted to NULL for SQL'''
+
 import argparse
 
 
@@ -11,11 +14,16 @@ def get_arguments():
 
 
 def main():
+    '''() -> file
+    Uses argparse to get input file. Creates new file for changes to be written
+    into, designated with tmp_ prefix. Blank columns are filled with NULL,
+    NA and Not applicable column values are replaced with NULL'''
     args = get_arguments()
-    filename = args.filename.split("/")
+    file = args.filename
+    filename = file.split('/')
     filepath = "/".join(filename[:-1])
-    with open(args.filename, "r") as input, \
-            open(filepath + "/tmp_" + filename[-1], "w") as out:
+    new_file = filepath + "/tmp_" + filename[-1]
+    with open(file, "r") as input, open(new_file, "w") as out:
         for line in input:
             line = line.split(",")
             for item in range(len(line)):
