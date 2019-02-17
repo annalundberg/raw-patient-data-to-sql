@@ -32,6 +32,9 @@ while read id; do
   line=$id,NULL,Unknown,Unknown,U,U,NULL;
   echo $line >> $tmp_file
 done < $data_path/data/subjectID_to_add.txt
+## Add patient IDs with demo info from staging
+while read entry; do
+  line=$entry;
+  echo $line >> $tmp_file
+done < $data_path/data/subject_demo_to_add.txt
 mv $tmp_file $csv_file
-## Add patient IDs from staging
-./add_unknown_subjectids_new.sh
